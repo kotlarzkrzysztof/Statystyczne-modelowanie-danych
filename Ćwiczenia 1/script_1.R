@@ -41,5 +41,7 @@ predict(model.1 , int = "c")[3,]
 # lwr: 8.408596
 
 cor(data)
+#Cor: 0.9408
 
 cor.test(count,time)
+#p-val < 5%: Korelacja istotnie różna od zera
