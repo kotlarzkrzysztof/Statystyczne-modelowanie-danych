@@ -1,0 +1,130 @@
+---
+title: "Sprawozdanie 2"
+author: "Krzysztof Kotlarz"
+date: "24.03.2020"
+output:
+  pdf_document: 
+    highlight: haddock
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r include=FALSE}
+dane <- read.table('http://theta.edu.pl/wp-content/uploads/2018/03/dane_kosiarki-1.txt', header = TRUE)
+head(dane)
+attach(dane)
+library(MASS)
+```
+
+
+
+# Lista 3
+
+## Zadanie 5
+
+### (i)
+
+```{r echo=FALSE}
+model.1 <- lda(owner~income + lotsize, data = dane)
+model.1
+```
+
+Średnie w poszczególnych grupach kształtują sie następująco:
+
+* dla grupy *1* *income* = 26.49, *lotsize* = 10.13
+* dla grupy *2* *income* = 19.13, *lotsize* = 8.82
+
+### (ii)
+
+Wartości współczynników klasyfikacyjnych są następujące:
+
+* $LD1 = -0.1453 * income -0.759 * lotsize$
+
+### (iii)
+
+Im większy współczynnik zmiennej tym jest on istotniejszy: większy współczynnik znajduje się przy zmiennej *income*
+
+### (iV)
+
+```{r}
+LD1 <- predict(model.1)$x
+sum(LD1 * (dane$owner == 1)) / sum(dane$owner == 1)
+sum(LD1 * (dane$owner == 2)) / sum(dane$owner == 2)
+```
+
+
+Średnie wartości funkcji dyskryminacyjnych dla:
+
+* *owner = 1*: -1.034
+* *owner  = 2*: 1.034
+
+### (v)
+
+```{r}
+owner.predict <- predict(model.1, dane[,1:2])
+```
+
+Za zbiór testowy przyjmujemy cały zbiór danych
+
+### (vi)
+
+```{r}
+owner.predict$posterior[20,]
+```
+
+Prawdopodobieństwo przynależności obserwacji 20 dla poszczególnych grup:
+
+* grupa *1*: 0.016
+* grupa *2*: 0.984
+
+### (vii)
+
+Ta obserwacja zostanie zaklasyfikowana do grupy 2 z prawdopodobieństwem 98.4%
+
+### (xiii)
+
+```{r}
+owner.classes <- owner.predict$class
+sum(owner.classes==owner)/length(owner)   
+```
+Poprawana klasyfikacji 87.5% obserwacji
+
+### (ix)
+
+```{r echo=FALSE}
+table(Original = dane$owner, Predicted =predict(model.1)$class)
+```
+
+Coefficient matrix przedstawia w wierszach przynależność obserwacji do klas ze zbioru, natomiast kolumny przynależność obserwacji do klas przewidziane przez model:
+
+* 11 obserwacji bedących *owner* = 1, zostało poprawnie przewidziane przez model, natomiast 1 obserwacja błędnie
+
+* 10 obserwacji bedących *owner* = 2, zostało poprawnie przewidziane przez model, natomiast 2 obserwacje błednie 
+
+## Zadnie 6.
+
+# (i)
+
+```{r include=FALSE}
+library(tidyverse)
+
+dane2 <- read.table('http://theta.edu.pl/wp-content/uploads/2018/03/dane_wino.txt', sep = ',')
+attach(dane2)
+
+dane2 <- rename(dane2, t_uprawy=V1)
+
+dane2$t_uprawy <- as.factor(dane2$t_uprawy)
+
+model.2 <- lda(t_uprawy ~ ., data = dane2)
+```
+
+```{r include=FALSE}
+library(knitr)
+kable(model.2$means[,1:6])
+```
+```{r}
+kable(model.2$means[,7:13])
+```
+

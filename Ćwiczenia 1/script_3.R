@@ -36,6 +36,7 @@ summary(model.1)
 model.2 <- lm(Petal.Length ~ Petal.Width, data = iris.setosa)
 summary(model.2)
 
-#Petal.Length = Petal.Width * 0.54 + 1.32: Przy wzroście wartości Petal.Width o 1, zmienna Petal.Length wzrośnie o 0.54
+# Petal.Length = Petal.Width * 0.54 + 1.32: 
+# Przy wzroście wartości Petal.Width o 1, zmienna Petal.Length wzrośnie o 0.54
 
 

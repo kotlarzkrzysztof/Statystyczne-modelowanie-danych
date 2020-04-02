@@ -16,7 +16,10 @@ summary(model.1)
 
 
 pairs(kfm)
-cor(kfm)
+
+kfm.copy <- kfm
+kfm.copy$sex <- as.numeric(kfm.copy$sex)
+cor(kfm.copy)
 
 #Z wykresu zależności parami jak i macierzy korelacji wynikają następujące silnie skorelowane pary:
 #Weight <-> dl.milk

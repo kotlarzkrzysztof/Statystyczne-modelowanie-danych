@@ -1,0 +1,435 @@
+---
+title: "Sprawozdanie 1"
+author: "Krzysztof Kotlarz"
+date: "14 03 2020"
+output:
+  pdf_document:
+    fig_height: 4
+    highlight: haddock
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Lista 1.
+## Zadanie 2.
+```{r include=FALSE}
+library(tidyverse)
+library(ISwR)
+attach(kfm)
+```
+
+
+```{r include=FALSE}
+kfm <- kfm
+```
+
+
+
+```{r echo=TRUE}
+model.1 <- lm(dl.milk ~ sex + weight + ml.suppl + mat.weight + mat.height)
+summary(model.1)
+```
+### (a)
+
+Zmienne istotne:
+*weight*, *mat.height*
+
+* Przy zmiennej niezależnej *sex* == girl, *dl.milk* zmaleje o -0.49, 
+* przy wzorście *weight* o 1, *dl.milk* wzrośnie o 1.35, 
+* przy wzroście *ml.supply* o 1, *dl.milk* zmalaje o .0022, 
+* przy wzroście *mat.weight* o 1, *dl.milk* wzrośnie o .0062, 
+* przy wzroście *mat.weight* o 1, *dl.milk* wzrośnie o .072
+* punkt przecięcia osi $y$ -11.68
+
+### (b)
+
+Zmienna *sex* jako factor ponieważ ta zmienna przyjmuje tylko 2 poziomy, jest to zmienna jakościowa.
+
+### (c)
+
+```{r echo=FALSE}
+par(mex=0.5)
+pairs(kfm, gap=0, cex.labels = 0.9)
+```
+
+Wykres przedstawia korelacje zmiennych "każda z każdą". Zauważono korelacje pomiedzy zmiennymi:
+
+* *weight* <-> *dl.milk*
+* *mat.weight* <-> *mat.height*
+
+Wykonano macierz korelacji w celu potwierdzenia powyższych zależności:
+
+```{r echo=TRUE}
+kfm.copy <- kfm
+kfm.copy$sex <- as.numeric(kfm.copy$sex)
+cor(kfm.copy)
+```
+
+Z wykresu zależności parami jak i macierzy korelacji wynikają następujące silnie skorelowane pary:
+
+* *weight* <-> *dl.milk*
+* *mat.weight* <-> *mat.height*
+
+### (d)
+
+Przy poziomie istotności $\alpha$ = 5%
+
+```{r echo=TRUE}
+model.all <- lm(dl.milk ~ ., data = kfm)
+summary(model.all)
+```
+
+Usunięto nieistotną zmienna *mat.weight*
+
+```{r echo=TRUE}
+model.all_1 <- lm(dl.milk ~ no + sex + weight + ml.suppl + mat.height, data = kfm)
+summary(model.all_1)
+```
+
+Usunięto nieistotną zmienną *no*
+
+```{r echo=TRUE}
+model.all_2 <- lm(dl.milk ~ sex + weight + ml.suppl + mat.height, data = kfm)
+summary(model.all_2)
+```
+
+Usunięto nieistotną zmienną *mat.height*
+
+```{r echo=TRUE}
+model.all_3 <- lm(dl.milk ~ weight + ml.suppl + mat.height, data = kfm)
+summary(model.all_3)
+```
+
+Usunięto nieistotną zmienną *sex*
+
+```{r echo=TRUE}
+model.all_4 <- lm(dl.milk ~ weight + mat.height, data = kfm)
+summary(model.all_4)
+```
+
+Usunięto nieistotną zmienną *ml.supply*. Ostateczny model:
+
+$dl.milk = weight * 1.43 + mat.height * 0.07 - 11.92$
+
+* Przy wzroście *weight* o jednostke, dl.milk wzrośnie o 1.43
+* Przy wzroście *mat.weight* o jednostke, dl.milk wzrośnie o .071
+* Punkt przecięcia osi OY -11.92
+
+## Zadanie 2.
+
+### (a)
+```{r echo=FALSE}
+par(mfrow=c(1,2))
+hist(iris$Sepal.Length[iris$Species=='setosa'], main = 'Histogram Iris Setosa\n - Length')
+hist(iris$Sepal.Width[iris$Species=='setosa'], main = 'Histogram Iris Setosa\n - Width')
+
+
+hist(iris$Sepal.Length[iris$Species=='versicolor'], main = 'Histogram Iris Versicolor\n - Length')
+hist(iris$Sepal.Width[iris$Species=='versicolor'], main = 'Histogram Iris Versicolor\n - Width')
+
+hist(iris$Sepal.Length[iris$Species=='virginica'], main = 'Histogram Iris Virginica\n - Length')
+hist(iris$Sepal.Width[iris$Species=='virginica'], main = 'Histogram Iris Virginica\n - Width')
+```
+
+### (b)
+```{r echo=FALSE}
+pairs(iris[iris$Species == 'setosa', 1:4], main = 'Wykres zależności parami dla gatunku setosa')
+```
+
+Korelacja pomiędzy zmiennymi *Sepal.Length* <-> *Sepal.Length*
+
+```{r echo=FALSE}
+pairs(iris[iris$Species == 'versicolor', 1:4], main = 'Wykres zależności parami dla gatunku versicolor')
+```
+
+Korelacja pomiędzy zmiennymi *Sepal.Length* <-> *Petal.Length* oraz *Sepal.Width* <-> *Petal.Length*
+
+```{r echo=FALSE}
+pairs(iris[iris$Species == 'virginica', 1:4], main = 'Wykres zależności parami dla gatunku virginica')
+```
+
+Silna korelacja pomiędzy zmiennymi *Sepal.Length* <-> *Petal.Length*
+
+### (c)
+```{r}
+cor(iris[iris$Species=='setosa',c(1,3)])
+```
+
+Słaba korelacja *Sepal.Length* <-> *Petal.Length* (0.26)
+
+```{r}
+cor(iris[iris$Species=='versicolor',c(1,3)])
+```
+
+Silna korelacja *Sepal.Length* <-> *Petal.Length*(0.75)
+
+```{r}
+cor(iris[iris$Species=='virginica',c(1,3)])
+```
+
+Silna korelacja *Sepal.Length* <-> *Petal.Length* (0.86)
+
+```{r}
+cor.test(iris$Sepal.Length[iris$Species == 'setosa'], iris$Petal.Length[iris$Species ==
+                                                                          'setosa'])
+```
+
+Współczynnik korelacji *Sepal.Length* i *Petal.Lengt*  o wartości 0.27 gatunku *setosa* nie jest istotny na poziomie ostotności $\alpha$ = 5%
+
+```{r}
+cor.test(iris$Sepal.Length[iris$Species == 'versicolor'], iris$Petal.Length[iris$Species ==
+                                                                              'versicolor']) 
+```
+
+Zmienne *Sepal.Length* i *Petal.Length* gatunku *versicolor* są istotnie skorelowane ze współczynnikiem korelacji na poziomie 0.75 i wartością p 2.586e-10
+
+```{r}
+cor.test(iris$Sepal.Length[iris$Species == 'virginica'], iris$Petal.Length[iris$Species ==
+                                                                             'virginica'])
+```
+
+Zmienne Sepal.Length i Petal.Lengt gatunku *virginica* są istotnie skorelowane ze współczynnikiem korelacji na poziomie 0.86 i wartością p 6.298e-16
+
+```{r}
+cor(iris[iris$Species=='setosa',1:4])
+```
+
+Dla gatunku *setosa* najsilniej skorelowane są zmienne *Sepal.Width* <-> *Sepal.Width*
+
+```{r}
+cor(iris[iris$Species=='versicolor',1:4])
+```
+
+Dla gatunku *versicolor* najsilniej skorelowane są zmienne *Petal.Length* <-> *Petal.Width*
+
+```{r}
+cor(iris[iris$Species=='virginica',1:4])
+```
+
+Dla gatunku *virginica* najsilniej skorelowane są zmienne *Petal.Length* <-> *Sepal.Length*
+
+### (d)
+
+```{r}
+iris.setosa <- iris[iris$Species=='setosa',1:4]
+```
+
+```{r}
+attach(iris.setosa)
+model.all <- lm(Petal.Length ~ Sepal.Length + Sepal.Width + Petal.Width, data = iris.setosa)
+summary(model.all)
+```
+
+
+```{r}
+model.1 <- lm(Petal.Length ~ Sepal.Length + Petal.Width, data = iris.setosa)
+summary(model.1)
+```
+
+
+```{r}
+model.2 <- lm(Petal.Length ~ Petal.Width, data = iris.setosa)
+summary(model.2)
+```
+
+$Petal.Length = Petal.Width * 0.54 + 1.33$ 
+
+* Przy wzroście wartości Petal.Width o 1, zmienna Petal.Length wzrośnie o 0.54
+* Punkt przecięcia osi OY 1.33
+
+# Lista 2.
+## Zadanie 3.
+
+```{r include=FALSE}
+attach(stackloss)
+library(car)
+```
+
+```{r}
+model.1 <- lm(stack.loss ~ Water.Temp + Acid.Conc.)
+summary(model.1)
+```
+
+W modelu powinna się znaleźć jedynie zmienna *Water.Temp*, zmienna *Acid.Conc.* jest nieisttona na poziomie a 5%
+
+```{r}
+model.2 <- lm(stack.loss ~ Water.Temp)
+summary(model.2)
+```
+
+Po usunięciu nieostotnej zmiennej, wyraz wolny zyskał wyższą istotność. Współczynnik dopasowania R2 = 0.75
+
+### (ii)
+
+```{r echo=FALSE}
+plot(stack.loss~Water.Temp, main = 'Wykres zależności stack.loss od Water.Temp')
+abline(model.2, col= 'red')
+```
+
+Brak potencjanych punktów o dużej dzwigni.
+
+### (v, vi)
+
+```{r}
+reszty.stud <- rstudent(model.2)
+outlier <- reszty.stud[abs(reszty.stud) > 2]
+```
+
+Brak obserwacji odstających wyznaczonych za pomocą reszt studentyzowanych dla rstudent > 2.
+
+### (vii)
+
+```{r}
+outlierTest(model.2)
+```
+OutlierTest nie również nie wykrywa obserwacji odstających na poziomie 5%
+
+\newpage
+### (viii)
+
+```{r}
+influencePlot(model.2)
+```
+
+influencePlot wskazuje  dla CoocD = n/21 = 0.19: obserwacje 1 i 3
+
+### (x)
+```{r echo=FALSE}
+influence.measures(model.2)
+```
+
+Influence measures wskazuje obserwacje 1 oraz 2 jako wpływowe. Po porównaniu wyników z influencePlot wybrano oberwacje 1 jako wpływową.
+
+### (xi)
+
+```{r}
+inf.ommit <- stackloss[-c(1),]
+model.3 <- lm(inf.ommit$stack.loss~inf.ommit$Water.Temp)
+```
+
+```{r}
+plot(inf.ommit$stack.loss~inf.ommit$Water.Temp, main = 'Wykres zależności stack.loss od Water.Temp')
+abline(model.3, col= 'red')
+```
+
+```{r}
+summary(model.3)
+```
+
+Ostateczny wspołczynnik dopasowania modelu po usunięciu obserwacji odstających R2 = 0.70
+
+## Zadanie 4.
+```{r include=FALSE}
+library(tidyverse)
+```
+
+```{r}
+dane <-
+  read.table('http://theta.edu.pl/wp-content/uploads/2018/03/DANE_predkosc_reakcji.txt')
+
+dane <- rename(dane, predkosc = V1, koncentracja = V2)
+```
+
+### (i)
+
+```{r echo=FALSE}
+attach(dane)
+plot(predkosc ~ koncentracja, main = 'Wykres zależności prędkości od koncentracji')
+```
+
+Przedstawiona zależność nie ma charakteru liniowego
+
+### (ii)
+
+```{r echo=FALSE}
+par(mfrow = c(1, 3))
+plot(
+  predkosc ~ koncentracja,
+  main = 'Prędkość dla koncetracji',
+  xlab = 'koncentracja',
+  ylab = 'log(Prędkość)',
+  log = 'y'
+)
+plot(
+  predkosc ~ koncentracja,
+  main = 'Prędkość dla koncetracji',
+  xlab = 'log(koncentracja)',
+  ylab = 'log(Prędkość)',
+  log = 'xy'
+)
+plot(
+  predkosc ~ koncentracja,
+  main = 'Prędkość dla koncetracji',
+  xlab = 'log(koncentracja)',
+  ylab = 'Prędkość',
+  log = 'x'
+)
+
+```
+
+Żadna z powyższych transformacji nie prowadzi do uzyskania liniowego charakteru. Wykres Prędkość ~ log(koncentracja), najbardziej zbliżony do charakteru liniowego. 
+
+```{r echo=FALSE}
+par(mfrow = c(1, 3))
+model.1 <- lm(log(predkosc) ~ koncentracja)
+plot(model.1$fitted, model.1$residuals)
+
+model.2 <- lm(log(predkosc) ~ log(koncentracja))
+plot(model.2$fitted, model.2$residuals)
+
+model.3 <- lm(predkosc ~ log(koncentracja))
+plot(model.3$fitted, model.3$residuals)
+```
+
+Losowy charakter reszt dla modelu 1, 2 i 3. Dla modelu  2 reszty skupiają sie wokół 0, ten model sugeruje dobre dopasowanie.
+
+### (iii)
+
+```{r}
+model.4 <- lm(predkosc ~ koncentracja + I(koncentracja ^ 2))
+summary(model.4)
+```
+### (iv)
+
+```{r echo=FALSE}
+plot(predkosc ~ koncentracja, main = 'Wykres zależności prędkości od koncentracji')
+curve(10.69371 + 2.77768 * x - .09782 * x ^ 2, add = T, col = 'red')
+```
+
+Wszystkie wspołczynniki są nieistotne statystycznie, współczynnik dopasowania R2 = 0.17
+
+```{r echo=FALSE}
+plot(model.4$fitted.values ~ model.4$residuals)
+```
+
+Charakter reszt jest losowy, lecz nie skupiają sie wokół zera. Model nie jest odpowiedni do opisu danych.
+
+### (v)
+
+```{r}
+model.5 <- lm(
+  predkosc ~ koncentracja + I(koncentracja ^ 2) + I(koncentracja ^ 3) + I(koncentracja ^ 4) + I(koncentracja ^ 5) + I(koncentracja ^ 6)
+)
+summary(model.5)
+```
+
+### (vi)
+
+```{r echo=FALSE}
+plot(predkosc ~ koncentracja, main = 'Wykres zależności predkości koncentracji')
+curve(
+  -120.76838 + 325.45467 * x - 246.63164 * x ^ 2 + 83.777377 * x ^ 3 -14.25726 * x ^ 4 + 1.18499 * x ^ 5 - 0.03785 * x ^ 6,
+  add = T,
+  col = 'red'
+)
+```
+
+Wspołczynnik dopasowania = 1. Nie jest to model odpowiedni, gdyż dopasowana krzywa jest dopasowana do wszystkich punktów zbioru, nie ma ona wartości predykcyjnej dla przyszłych obserwacji.
+
+
+
